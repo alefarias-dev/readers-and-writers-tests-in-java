@@ -4,11 +4,10 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		
+		System.out.println("Iniciando simulacoes...");
 		int r = 100;
 		int w = 0;
 		int mode = 0;
-		
-		long[] valores = new long[50];
 		
 		for (r = 100; r >= 0; r--) {
 			
@@ -28,6 +27,8 @@ public class Main {
 			System.out.println("["+r+"|"+w+"] "+(total_rw/50)+" "+(total_bw/50));
 			w++;
 		}
+		
+		System.out.println(Thread.activeCount());
 		System.out.println("fim...");
 	}
 }
