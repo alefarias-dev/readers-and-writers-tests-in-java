@@ -1,0 +1,22 @@
+@ solucao 1
+
+- colocar Readers e Writers em um único arranjo
+e embaralhar o arranjo []
+- atualizar classe database para conter o arquivo de texto []
+- atualizar run do Reader para ler alguma linha do database []
+- atualizar run do Writer para escrever em alguma linha do database []
+- corrigir run dos Readers e Writers para rodarem apenas 100 vezes
+ao inves de infinitamente []
+- colocar sleeps de 1 ms []
+
+# criar classe simulacao para retornar o tempo em milissigundos de cada
+simulacao
+  - metodo start(int readers, int writers): recebe a quatidade de readers e
+  writers, monta o arranjo e inicia a execução das threads, no final retorna
+  o tempo em milissegundos []
+
+# na classe Main, rodar a classe simulacao varias vezes montando um arranjo
+com os valores de tempo retornados para cada simulacao []
+
+@@ Para a segunda versão basta restringir ainda mais a classe database com
+relação aos semaforos
