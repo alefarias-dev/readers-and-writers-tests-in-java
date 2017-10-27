@@ -22,7 +22,7 @@ class SimuladorRW {
 	public static int NUM_OF_WRITERS = 2;
 	
 	// configura quantidade de readers e writers
-	public static void setRW(int r, int w) { NUM_OF_READERS = r; NUM_OF_READERS = w; }
+	public static void setRW(int r, int w) { NUM_OF_READERS = r; NUM_OF_WRITERS = w; }
 	
 	public SimuladorRW(int readers, int writers) { setRW(readers, writers); }
 	
@@ -53,7 +53,7 @@ class SimuladorRW {
 		System.out.println("rodando solucao readers and writers");
 		
 		// configura qtde de readers e writers
-		setRW(2, 5);
+		setRW(50, 50);
 		
 		// arranjo com todos os objetos escritores e leitores
 		// e cria objetos readers e writers
@@ -69,7 +69,11 @@ class SimuladorRW {
 		readers_writers = (Thread[]) rw.toArray();
 			
 		// apos embaralhar
-		for (int i = 0; i < NUM_OF_WRITERS + NUM_OF_WRITERS; i++) readers_writers[i].start();		
+		for (int i = 0; i < NUM_OF_READERS + NUM_OF_WRITERS; i++) {
+			readers_writers[i].start();
+		}
+		
+		System.out.println("fim...");
 	}
 }
 
@@ -195,20 +199,19 @@ class Reader implements Runnable {
 	}
 
 	public void run() {
-		int i = 0;
-		while (i < 5) {
+		
 			SleepUtilities.nap();
 
 			System.out.println("reader " + readerNum + " wants to read.");
 			database.acquireReadLock(readerNum);
 			
-			i++;
+		
 			// you have access to read from the database
 			// let's read for awhile .....
 			SleepUtilities.nap();
 
 			database.releaseReadLock(readerNum);
-		}
+		
 	};
 }
 
@@ -230,21 +233,20 @@ class Writer implements Runnable {
 	}
 
 	public void run() {
-		int i = 0;
-		while (i < 5) {
+		
 			SleepUtilities.nap();
 
 			System.out.println("writer " + writerNum + " wants to write.");
 			database.acquireWriteLock(writerNum);
 			
-			i++;
+		
 			
 			// you have access to write to the database
 			// write for awhile ...
 			SleepUtilities.nap();
 
 			database.releaseWriteLock(writerNum);
-		}
+		
 	}
 
 }
@@ -271,7 +273,7 @@ class SleepUtilities {
 	public static void nap(int duration) {
 		int sleeptime = (int) (NAP_TIME * Math.random());
 		try {
-			Thread.sleep(sleeptime * 1000);
+			Thread.sleep(sleeptime * 1);
 		} catch (InterruptedException e) {
 		}
 	}
