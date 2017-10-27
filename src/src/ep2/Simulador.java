@@ -11,9 +11,9 @@ class Simulador {
 	
 	//0: readers and writers.
 	//1: busy wait.
-	public static int NUM_OF_READERS = 70;
-	public static int NUM_OF_WRITERS = 30;
-	public static int MODE = 0;
+	public static int NUM_OF_READERS = 99;
+	public static int NUM_OF_WRITERS = 1;
+	public static int MODE = 1;
 	
 	//Configura a quantidade de readers e writers.
 	public static void setRW(int r, int w) { NUM_OF_READERS = r; NUM_OF_WRITERS = w; }
@@ -38,7 +38,7 @@ class Simulador {
 		return lines.toArray(new String[lines.size()]);
 	}
 	
-	public static void main(String args[]) throws Exception {
+	public static long start() throws Exception {
 		
 		//Carrega o vetor com o conteudo do arquivo bd.txt.
 		String[] db = carregarDatabase();
@@ -60,8 +60,6 @@ class Simulador {
 		//Iniciou o cronometro.
 		long tempoInicio = System.currentTimeMillis();
 		
-		
-		
 		//Inicia todas as threads sequencialmente.
 		for (int i = 0; i < NUM_OF_READERS + NUM_OF_WRITERS; i++) {
 			readers_writers[i].start();
@@ -72,9 +70,10 @@ class Simulador {
 		//Desligou o cronometro.		
 		long tempoFinal = System.currentTimeMillis();
 		
-		System.out.println("Tempo Total: " + (tempoFinal - tempoInicio) + " milissegundos.");
-		System.out.println("Modo: " + ((MODE == 0) ? "RW" : "BUSY"));
-		System.out.println("Proporcao (R:W): " + NUM_OF_READERS + ":" + NUM_OF_WRITERS);
+		//System.out.println("Tempo Total: " + (tempoFinal - tempoInicio) + " milissegundos.");
+		//System.out.println("Modo: " + ((MODE == 0) ? "RW" : "BUSY"));
+		//System.out.println("Proporcao (R:W): " + NUM_OF_READERS + ":" + NUM_OF_WRITERS);
+		return tempoFinal - tempoInicio;
 	}
 }
 
@@ -114,7 +113,7 @@ class Database implements RWLock {
 		if (readerCount == 1) 
 			try { db.acquire(); } catch (InterruptedException e) { }
 		
-		System.out.println("Leitor: " + readerNum + " esta lendo. Leitores: " + readerCount);
+		//System.out.println("Leitor: " + readerNum + " esta lendo. Leitores: " + readerCount);
 		mutex.release();
 	}
 
@@ -125,29 +124,29 @@ class Database implements RWLock {
 		// se eh o ultima, avisa que nao tem ninguem lendo a base de dados
 		if (readerCount == 0) db.release();
 		
-		System.out.println("Leitor " + readerNum + " terminou a leitura. Leitores: " + readerCount);
+		//System.out.println("Leitor " + readerNum + " terminou a leitura. Leitores: " + readerCount);
 		mutex.release();
 	}
 
 	public void acquireWriteLock(int writerNum) {
 		try { db.acquire(); } catch (InterruptedException e) {}
-		System.out.println("Escritor " + writerNum + " esta escrevendo.");
+		//System.out.println("Escritor " + writerNum + " esta escrevendo.");
 	}
 
 	public void releaseWriteLock(int writerNum) {
-		System.out.println("Escritor " + writerNum + " terminou de escrever.");
+		//System.out.println("Escritor " + writerNum + " terminou de escrever.");
 		db.release();
 	}
 	
 	public void busyLock(Runnable rw) {
 		try { db.acquire(); } catch (InterruptedException e) { }
-		if (rw instanceof Writer) System.out.println("Writer " + ((Writer) rw).getId() + " is writing.");
-		if (rw instanceof Reader) System.out.println("Reader " + ((Reader) rw).getId() + " is reading.");
+		//if (rw instanceof Writer) System.out.println("Writer " + ((Writer) rw).getId() + " is writing.");
+		//if (rw instanceof Reader) System.out.println("Reader " + ((Reader) rw).getId() + " is reading.");
 	}
 	
 	public void busyRelease(Runnable rw) {
-		if (rw instanceof Writer) System.out.println("Writer " + ((Writer) rw).getId() + " is done writing.");
-		if (rw instanceof Reader) System.out.println("Reader " + ((Reader) rw).getId() + " is done reading.");
+		//if (rw instanceof Writer) System.out.println("Writer " + ((Writer) rw).getId() + " is done writing.");
+		//if (rw instanceof Reader) System.out.println("Reader " + ((Reader) rw).getId() + " is done reading.");
 		db.release();
 	}
 	
@@ -175,7 +174,7 @@ class Reader implements Runnable {
 
 		String texto = "";
 		
-		System.out.println("Leitor " + readerNum + " precisa ler.");
+		//System.out.println("Leitor " + readerNum + " precisa ler.");
 		if (mode == 0) database.acquireReadLock(readerNum);
 		else database.busyLock(this);
 		
