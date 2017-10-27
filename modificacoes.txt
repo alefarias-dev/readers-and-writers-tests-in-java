@@ -1,4 +1,4 @@
-@ solucao 1
+﻿@ solucao 1
 
 - colocar Readers e Writers em um único arranjo
 e embaralhar o arranjo []
@@ -20,3 +20,6 @@ com os valores de tempo retornados para cada simulacao []
 
 @@ Para a segunda versão basta restringir ainda mais a classe database com
 relação aos semaforos
+
+To do
+Procurar implementação 2.
