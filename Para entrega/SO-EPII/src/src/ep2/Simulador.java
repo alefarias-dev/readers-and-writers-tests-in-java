@@ -15,7 +15,6 @@ class Simulador {
 	public static int NUM_OF_WRITERS = 1;
 	public static int MODE = 1;
 	
-	//Configura a quantidade de readers e writers.
 	public static void setRW(int r, int w) { NUM_OF_READERS = r; NUM_OF_WRITERS = w; }
 	
 	public Simulador(int readers, int writers, int mode) { 
@@ -23,7 +22,6 @@ class Simulador {
 		MODE = mode;
 	}
 	
-	//Carrega arquivo bd.txt
 	public static String[] carregarDatabase () throws Exception {
 		
 		String nomeArquivo = "bd/bd.txt";
@@ -40,39 +38,30 @@ class Simulador {
 	
 	public static long start() throws Exception {
 		
-		//Carrega o vetor com o conteudo do arquivo bd.txt.
 		String[] db = carregarDatabase();
-		//Cria database com o vetor.
+		
 		Database database = new Database(db);
 		
-		//Cria o vetor de Threads com readers e writers.
 		Thread[] readers_writers = new Thread[NUM_OF_READERS + NUM_OF_WRITERS];
 		for (int i = 0; i < NUM_OF_READERS + NUM_OF_WRITERS; i++) {
 			if (i < NUM_OF_READERS) readers_writers[i] = new Thread(new Reader(i, database, MODE));
 			else readers_writers[i] = new Thread(new Writer(i, database, MODE));
 		}
 		
-		//Embaralhou os threads do vetor.
 		List<Thread> rw = Arrays.asList(readers_writers);
 		Collections.shuffle(rw);
 		readers_writers = (Thread[]) rw.toArray();
 			
-		//Iniciou o cronometro.
 		long tempoInicio = System.currentTimeMillis();
 		
-		//Inicia todas as threads sequencialmente.
 		for (int i = 0; i < NUM_OF_READERS + NUM_OF_WRITERS; i++) {
 			readers_writers[i].start();
 		}
 		
 		while(Thread.activeCount() > 1){}
 		
-		//Desligou o cronometro.		
 		long tempoFinal = System.currentTimeMillis();
 		
-		//System.out.println("Tempo Total: " + (tempoFinal - tempoInicio) + " milissegundos.");
-		//System.out.println("Modo: " + ((MODE == 0) ? "RW" : "BUSY"));
-		//System.out.println("Proporcao (R:W): " + NUM_OF_READERS + ":" + NUM_OF_WRITERS);
 		return tempoFinal - tempoInicio;
 	}
 }
@@ -93,10 +82,10 @@ interface RWLock {
 
 class Database implements RWLock {
 	
-	private int readerCount;  // the number of active readers
-	private Semaphore mutex;  // controls access to readerCount
-	private Semaphore db;     // controls access to the database
-	public String[] database; // possui as linhas da base de dados 
+	private int readerCount;
+	private Semaphore mutex;
+	private Semaphore db;
+	public String[] database; 
 
 	public Database(String[] database) {
 		readerCount = 0;
@@ -109,11 +98,9 @@ class Database implements RWLock {
 		try { mutex.acquire(); } catch (InterruptedException e) { }
 		++readerCount;
 
-		// se eh o primeiro, avisa que a base esta sendo lida
 		if (readerCount == 1) 
 			try { db.acquire(); } catch (InterruptedException e) { }
 		
-		//System.out.println("Leitor: " + readerNum + " esta lendo. Leitores: " + readerCount);
 		mutex.release();
 	}
 
@@ -121,39 +108,29 @@ class Database implements RWLock {
 		try { mutex.acquire(); } catch (InterruptedException e) { }
 		--readerCount;
 
-		// se eh o ultima, avisa que nao tem ninguem lendo a base de dados
 		if (readerCount == 0) db.release();
 		
-		//System.out.println("Leitor " + readerNum + " terminou a leitura. Leitores: " + readerCount);
 		mutex.release();
 	}
 
 	public void acquireWriteLock(int writerNum) {
 		try { db.acquire(); } catch (InterruptedException e) {}
-		//System.out.println("Escritor " + writerNum + " esta escrevendo.");
 	}
 
 	public void releaseWriteLock(int writerNum) {
-		//System.out.println("Escritor " + writerNum + " terminou de escrever.");
 		db.release();
 	}
 	
 	public void busyLock(Runnable rw) {
 		try { db.acquire(); } catch (InterruptedException e) { }
-		//if (rw instanceof Writer) System.out.println("Writer " + ((Writer) rw).getId() + " is writing.");
-		//if (rw instanceof Reader) System.out.println("Reader " + ((Reader) rw).getId() + " is reading.");
 	}
 	
 	public void busyRelease(Runnable rw) {
-		//if (rw instanceof Writer) System.out.println("Writer " + ((Writer) rw).getId() + " is done writing.");
-		//if (rw instanceof Reader) System.out.println("Reader " + ((Reader) rw).getId() + " is done reading.");
 		db.release();
 	}
 	
 	public String[] getdb() {return this.database;}
 }
-
-// ******************************************************************************************
 
 class Reader implements Runnable {
 
@@ -174,16 +151,11 @@ class Reader implements Runnable {
 
 		String texto = "";
 		
-		//System.out.println("Leitor " + readerNum + " precisa ler.");
 		if (mode == 0) database.acquireReadLock(readerNum);
 		else database.busyLock(this);
 		
-	
-		// you have access to read from the database
-		// let's read for awhile .....
 		for (int i = 0; i < 100; i++) {
 			texto = database.getdb()[getRandomNumber(0, database.database.length-1)];
-			//System.out.println("acessou: "+i);
 		}
 		
 		SleepUtilities.nap();
@@ -216,12 +188,9 @@ class Writer implements Runnable {
 
 	public void run() {
 
-		// System.out.println("Escritor " + writerNum + " precisa escrever.");
 		if (mode == 0) database.acquireWriteLock(writerNum);
 		else  database.busyLock(this);
 		
-		// you have access to write to the database
-		// write for awhile ...
 		for (int i = 0; i < 100; i++)
 			database.database[getRandomNumber(0, database.database.length-1)] = "MODIFICADO";
 		
@@ -237,8 +206,6 @@ class Writer implements Runnable {
 	}
 
 }
-
-// *****************************************************************
 
 class SleepUtilities {
 	
