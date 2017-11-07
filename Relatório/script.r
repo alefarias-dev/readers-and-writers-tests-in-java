@@ -10,7 +10,8 @@ ggplot(df, aes(x = writers)) +
   geom_smooth(aes(y = df$time_rw), colour = cores[2], se = 'F') +
   labs(x = "Escritores", y = "Tempo em Milissegundos", title = "Número de Escritores x Tempo", 
        subtitle = "Usando a solução Readers/Writers") +
-  scale_color_manual(name = "Legenda:", values = cores[2])
+  scale_color_manual(name = "Legenda:", values = cores[2]) +
+  ylim(30, 220)
 
 #Numero de Escritores x Tempo (BW).
 ggplot(df, aes(x = writers)) +
@@ -18,7 +19,8 @@ ggplot(df, aes(x = writers)) +
   geom_smooth(aes(y = df$time_bw), color = cores[1], se = 'F') +
   labs(x = "Escritores", y = "Tempo em Milissegundos", title = "Número de Escritores x Tempo", 
        subtitle = "Usando a solução Espera Ocupada") +
-  scale_color_manual(name = "Legenda:", values = cores[1])
+  scale_color_manual(name = "Legenda:", values = cores[1]) +
+  ylim(30, 220)
 
 #Cruzando os dois resultados.
 ggplot(df, aes(x = writers)) +
@@ -26,6 +28,5 @@ ggplot(df, aes(x = writers)) +
   geom_point(aes(y = df$time_bw, color = "Espera Ocupada"), se = 'F') +
   labs(x = "Escritores", y = "Tempo em Milissegundos", title = "Número de Escritores x Tempo", 
        subtitle = "Cruzando os dois resultados") +
-  scale_color_manual(name = "Legenda:", values = cores)
-
-
+  scale_color_manual(name = "Legenda:", values = cores) +
+  ylim(30, 220)
